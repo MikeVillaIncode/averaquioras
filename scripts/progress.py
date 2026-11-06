@@ -97,7 +97,7 @@ CSS = """html,body{margin:0;font-family:'DM Sans',system-ui,sans-serif}
 .st{flex-shrink:0;font-size:11px;padding:2px 8px;border-radius:9999px;background:#EBECEF;color:#6E758C}
 .st-done{background:#E8F5EE;color:#128050}.st-now{background:#E5F0FF;color:#0054FF}
 [hidden]{display:none!important}
-.lg{display:inline-flex;flex-shrink:0;padding:2px;border-radius:9999px;background:#EBECEF;-webkit-app-region:no-drag}
+.lg{display:inline-flex;flex-shrink:0;padding:2px;border-radius:9999px;background:#EBECEF}
 .lg button{border:0;margin:0;padding:2px 8px;border-radius:9999px;background:transparent;color:#6E758C;font:500 11px/16px 'DM Sans',system-ui,sans-serif;cursor:pointer}
 .lg button[aria-pressed=true]{background:#FFFFFF;color:#262831;box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .lg button:focus-visible{outline:2px solid #0054FF;outline-offset:1px}"""
@@ -164,7 +164,7 @@ def write(cfg):
     widget = f"""<!doctype html><html lang="{default}"><head><meta charset="utf-8"><meta http-equiv="refresh" content="{refresh}">{FONT}
 <style>{CSS}
 html,body{{background:transparent;overflow:hidden}}
-.w{{position:relative;margin:8px;padding:16px;border-radius:16px;background:#FFFFFF;border:1px solid #EBECEF;box-shadow:0 6px 12px rgba(50,50,93,.11),0 3px 6px rgba(0,0,0,.07);-webkit-app-region:drag;cursor:move;color:#3A3E4B}}
+.w{{position:relative;margin:8px;padding:16px;border-radius:16px;background:#FFFFFF;border:1px solid #EBECEF;box-shadow:0 6px 12px rgba(50,50,93,.11),0 3px 6px rgba(0,0,0,.07);cursor:move;user-select:none;color:#3A3E4B}}
 .ttl{{margin:0 36px 6px 0;font-size:13px;font-weight:500;color:#262831;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 .top{{display:flex;align-items:baseline;gap:10px}}.pct{{font-size:32px;font-weight:500;color:#262831;line-height:1.2}}.left{{font-size:13px;color:#6E758C}}
 .bar.sm{{height:6px;margin:6px 0 2px}}[data-lang]>.bar{{margin:8px 0 4px}}
@@ -172,11 +172,11 @@ ul{{list-style:none;margin:12px 0 0;padding:0}}li{{margin:10px 0 0}}.sr{{display
 .sn{{font-size:12px;font-weight:500;color:#262831;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}.m{{font-size:11px;color:#6E758C}}
 .foot{{margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:#6E758C}}
 .ft{{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
-.x{{position:absolute;z-index:2;top:8px;right:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:8px;background:transparent;color:#6E758C;font-size:18px;line-height:1;cursor:pointer;-webkit-app-region:no-drag}}.x:hover{{background:#F9F9F9;color:#3A3E4B}}
-</style></head><body><div class="w" id="w"><button class="x" title="{close}" aria-label="{close}" onclick="window.close()">×</button>
+.x{{position:absolute;z-index:2;top:8px;right:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:8px;background:transparent;color:#6E758C;font-size:18px;line-height:1;cursor:pointer}}.x:hover{{background:#F9F9F9;color:#3A3E4B}}
+</style></head><body><div class="w" id="w"><button class="x" title="{close}" aria-label="{close}" onclick="window.avq?avq.close():window.close()">×</button>
 {w_body}<div class="foot">{w_foot}{lang_switch()}</div></div>
 {lang_script(default, "try{document.title=String(Math.ceil(document.getElementById('w').getBoundingClientRect().bottom+8));}catch(e){}")}
-<script>(function(){{var w=document.getElementById('w');function rr(){{w.style.webkitAppRegion='no-drag';requestAnimationFrame(function(){{requestAnimationFrame(function(){{w.style.webkitAppRegion='';}});}});}}window.addEventListener('resize',rr);setTimeout(rr,300);document.addEventListener('keydown',function(e){{if(e.key==='Escape')window.close();}});}})();</script>
+<script>(function(){{var w=document.getElementById('w'),a=window.avq;w.addEventListener('mousedown',function(e){{if(e.button!==0||e.target.closest('button'))return;if(a)a.dragStart();}});window.addEventListener('mouseup',function(){{if(a)a.dragEnd();}});document.addEventListener('keydown',function(e){{if(e.key==='Escape'){{if(a)a.close();else window.close();}}}});}})();</script>
 </body></html>"""
     (OUTDIR / 'widget.html').write_text(widget)
     cs = commits(cfg.get('commits'))

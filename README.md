@@ -81,5 +81,6 @@ Any text can be a plain string or `{"en": ..., "es": ...}`. Done-signals: `{"fil
 - `scripts/progress.py` · reads the signals and renders the widget and the page
 - `scripts/run.sh`, `scripts/stop.sh` · start and stop a widget (by PID, never `pkill`)
 - `widget/main.js` · the Electron window (frameless, always on top, fits its height to the card)
+- `widget/preload.js` · lets the page start a drag and close the window (dragging is done by the main process, not CSS drag regions, so the close button's hit area is exactly where it looks)
 
 Styling follows the Incode design canon: DM Sans, `#0054FF`, the UI greys.
