@@ -8,7 +8,7 @@ Built for the moments when you hand work to background agents (a review round, a
 
 ## What you get
 
-- **Floating widget**, top right by default. Drag it anywhere (any display); it remembers where you left it. × closes it.
+- **Floating widget**, top right by default. Drag it anywhere (any display); it remembers where you left it. × (or Esc) closes it.
 - **Browser page** with the same progress plus the latest commits of the branch, for a bigger view.
 - **Title on top**, so you can tell several widgets apart.
 - **EN / ES switch** at the bottom right. Your choice applies to every widget and page.
