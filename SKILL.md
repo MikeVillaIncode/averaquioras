@@ -59,6 +59,7 @@ capped at 95 % until its done-signal appears, so the estimate self-corrects as s
 
 ## Rules
 
+- Launch `run.sh` **outside the command sandbox** (in Claude Code: `dangerouslyDisableSandbox: true`). A sandboxed shell kills the Electron window as soon as the command ends, so the widget flashes and disappears. Check it survived with `ps -p $(cat <dir>/widget.pid)` in a later call.
 - Only one widget window per config; `run.sh` replaces the previous one. The window remembers where the user leaves it (any display) in `widget-bounds.json`; never reposition it yourself.
 - Stop processes by PID (the scripts do), never with `pkill -f`.
 - The estimate is an estimate: say so to the user; never present it as exact.
