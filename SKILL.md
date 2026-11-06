@@ -51,6 +51,32 @@ capped at 95 % until its done-signal appears, so the estimate self-corrects as s
 ```
 
    `start` is the epoch second the job started (e.g. `stat -f %SB -t %s <dir the job created>` or now).
+
+   **Sequential, parallel and nested.** By default steps run one after another. Add `"mode": "parallel"`
+   (or `"parallel": true`) to run them at the same time. Any step can instead be a **group**: a `title`, an
+   optional `mode`, and its own `steps` (no `minutes` or `done`: a group is done when all its steps are).
+   Nest as deep as the job: parallel agents, each with sequential or parallel tasks, then a final step.
+   Sequential children start when the previous one is done; parallel children all start with their group.
+   Time left adds up sequential parts and takes the longest of parallel ones; the overall % weighs every
+   leaf step by its minutes. Group rows show "N of M done · in parallel / in order" with their children
+   indented under them.
+
+```json
+{
+  "title": {"es": "Capturas del rediseño", "en": "Redesign screenshots"},
+  "start": 1793891925,
+  "steps": [
+    {"title": {"es": "Agentes", "en": "Agents"}, "mode": "parallel", "steps": [
+      {"title": "Agente A · copy", "steps": [
+        {"key": "a1", "title": "Borrador", "minutes": 15, "done": {"file": "/abs/.context/a-draft.md"}},
+        {"key": "a2", "title": "Revisión", "minutes": 30, "done": {"file": "/abs/.context/a-review.md"}}]},
+      {"title": "Agente B · capturas", "mode": "parallel", "steps": [
+        {"key": "b1", "title": "Escritorio", "minutes": 20, "done": {"glob": "/abs/shots/desktop/*.png"}},
+        {"key": "b2", "title": "Móvil", "minutes": 25, "done": {"glob": "/abs/shots/mobile/*.png"}}]}]},
+    {"key": "final", "title": "Integrar y revisar", "minutes": 15, "done": {"file": "/abs/.context/final.md"}}
+  ]
+}
+```
 7. Run `~/.claude/skills/averaquioras/scripts/run.sh ~/.claude/averaquioras/<slug>/config.json`
    (it stops a previous instance of the same config first). Tell the user, in their language: the widget
    is top-right, drag to move, × closes, it refreshes every N minutes, the page link
@@ -60,7 +86,8 @@ capped at 95 % until its done-signal appears, so the estimate self-corrects as s
 ## Rules
 
 - Launch `run.sh` **outside the command sandbox** (in Claude Code: `dangerouslyDisableSandbox: true`). A sandboxed shell kills the Electron window as soon as the command ends, so the widget flashes and disappears. Check it survived with `ps -p $(cat <dir>/widget.pid)` in a later call.
-- Only one widget window per config; `run.sh` replaces the previous one. The window remembers where the user leaves it (any display) in `widget-bounds.json`; never reposition it yourself.
+- Only one widget window per config; `run.sh` replaces the previous one. The window remembers where the user leaves it (any display) and the size they give it in `widget-bounds.json`; never reposition or resize it yourself.
+- **Size and scroll.** The window grows with the card up to 520 px tall by default; past that the step list scrolls inside the card while the title, overall % and footer stay put (the scroll position survives each refresh). The user resizes it from the bottom-right corner (320–720 px wide); the height they leave becomes the new cap. Tell the user about the corner when the job has many steps.
 - Stop processes by PID (the scripts do), never with `pkill -f`.
 - The estimate is an estimate: say so to the user; never present it as exact.
 - Colours and type follow the Incode design canon (DM Sans, #0054FF, the UI greys); don't restyle ad hoc.
